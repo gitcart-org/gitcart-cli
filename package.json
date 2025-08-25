@@ -1,6 +1,6 @@
 {
   "name": "gitcart-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "GitCart CLI - Universal static e-shop generator (standalone distribution)",
   "homepage": "https://github.com/gitcart-org/gitcart-cli#readme",
   "bugs": {

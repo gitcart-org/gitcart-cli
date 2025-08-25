@@ -736,7 +736,7 @@ gitcart info [options]
 
 🏷️  Project Details:
    Name: Můj E-shop
-   Version: 0.1.0
+   Version: 0.1.1
    GitCart CLI: 1.0.0
    Node.js: 18.17.0
 
