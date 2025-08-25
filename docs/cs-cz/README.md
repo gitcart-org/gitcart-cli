@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![GitCart Logo](https://img.shields.io/badge/GitCart-v0.1.1-blue?style=for-the-badge)
+![GitCart Logo](https://img.shields.io/badge/GitCart-v0.1.2-blue?style=for-the-badge)
 ![Node.js](https://img.shields.io/badge/Node.js-18+-green?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 

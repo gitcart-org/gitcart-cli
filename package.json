@@ -1,6 +1,6 @@
 {
   "name": "gitcart-cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "GitCart CLI - Universal static e-shop generator (standalone distribution)",
   "homepage": "https://github.com/gitcart-org/gitcart-cli#readme",
   "bugs": {
@@ -34,10 +34,13 @@
     "node": ">=16.0.0"
   },
   "bin": {
-    "gitcart": "./gitcart"
+    "gitcart": "./gitcart.js"
   },
   "files": [
-    "gitcart*",
+    "gitcart.js",
+    "gitcart-linux",
+    "gitcart-win.exe",
+    "gitcart-macos",
     "docs/**/*",
     "templates/**/*",
     "README.md",
