@@ -1,0 +1,300 @@
+<!-- Search Box Component -->
+<div class="search-box relative">
+  <form class="search-form flex items-center" onsubmit="performSearch(event)">
+    <div class="relative flex-1">
+      <input type="search" 
+             name="q"
+             id="search-input"
+             class="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+             placeholder="{{ 'Search products...' | t: current_language }}"
+             autocomplete="off">
+      
+      <!-- Search Icon -->
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </div>
+      
+      <!-- Clear Button -->
+      <button type="button" 
+              class="clear-search absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              onclick="clearSearch()" 
+              style="display: none;">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </form>
+  
+  <!-- Search Results Dropdown -->
+  <div class="search-results absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 opacity-0 invisible transform translate-y-1 transition-all duration-200 z-50 max-h-96 overflow-y-auto">
+    <!-- Search suggestions will be populated by JavaScript -->
+    <div class="search-suggestions">
+      <!-- Loading state -->
+      <div class="search-loading hidden p-4 text-center">
+        <div class="inline-flex items-center">
+          <svg class="animate-spin h-4 w-4 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span class="text-sm text-gray-600 dark:text-gray-400">{{ 'Searching...' | t: current_language }}</span>
+        </div>
+      </div>
+      
+      <!-- No results -->
+      <div class="search-no-results hidden p-4 text-center">
+        <svg class="h-8 w-8 mx-auto mb-2 text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <p class="text-sm text-gray-500 dark:text-gray-400">{{ 'No products found' | t: current_language }}</p>
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">{{ 'Try different keywords' | t: current_language }}</p>
+      </div>
+      
+      <!-- Results container -->
+      <div class="search-results-list"></div>
+      
+      <!-- View all results -->
+      <div class="search-footer hidden border-t border-gray-200 dark:border-gray-700 p-3">
+        <a href="#" class="view-all-results block text-center text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
+          {{ 'View all results' | t: current_language }} (<span class="results-count">0</span>)
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Search functionality
+let searchTimeout;
+const searchInput = document.getElementById('search-input');
+const searchResults = document.querySelector('.search-results');
+const searchSuggestions = document.querySelector('.search-suggestions');
+const clearButton = document.querySelector('.clear-search');
+
+// Search input event listeners
+if (searchInput) {
+  searchInput.addEventListener('input', function(e) {
+    const query = e.target.value.trim();
+    
+    // Show/hide clear button
+    if (clearButton) {
+      clearButton.style.display = query.length > 0 ? 'flex' : 'none';
+    }
+    
+    // Debounce search
+    clearTimeout(searchTimeout);
+    
+    if (query.length >= 2) {
+      searchTimeout = setTimeout(() => {
+        performInstantSearch(query);
+      }, 300);
+    } else {
+      hideSearchResults();
+    }
+  });
+  
+  // Show results on focus if there's a query
+  searchInput.addEventListener('focus', function(e) {
+    const query = e.target.value.trim();
+    if (query.length >= 2) {
+      showSearchResults();
+    }
+  });
+  
+  // Handle keyboard navigation
+  searchInput.addEventListener('keydown', function(e) {
+    const resultItems = searchResults.querySelectorAll('.search-result-item');
+    let currentIndex = Array.from(resultItems).findIndex(item => item.classList.contains('highlighted'));
+    
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        if (currentIndex < resultItems.length - 1) {
+          if (currentIndex >= 0) resultItems[currentIndex].classList.remove('highlighted');
+          resultItems[currentIndex + 1].classList.add('highlighted');
+        }
+        break;
+        
+      case 'ArrowUp':
+        e.preventDefault();
+        if (currentIndex > 0) {
+          resultItems[currentIndex].classList.remove('highlighted');
+          resultItems[currentIndex - 1].classList.add('highlighted');
+        }
+        break;
+        
+      case 'Enter':
+        e.preventDefault();
+        const highlighted = searchResults.querySelector('.search-result-item.highlighted');
+        if (highlighted) {
+          window.location.href = highlighted.dataset.url;
+        } else {
+          performSearch(e);
+        }
+        break;
+        
+      case 'Escape':
+        hideSearchResults();
+        searchInput.blur();
+        break;
+    }
+  });
+}
+
+function performSearch(event) {
+  if (event) event.preventDefault();
+  
+  const query = searchInput.value.trim();
+  if (query.length > 0) {
+    window.location.href = `/search/?q=${encodeURIComponent(query)}`;
+  }
+}
+
+function performInstantSearch(query) {
+  if (typeof GitCart === 'undefined' || !GitCart.search) {
+    // Fallback: redirect to search page
+    return;
+  }
+  
+  showSearchResults();
+  showLoading(true);
+  
+  // Perform search using GitCart search API
+  GitCart.search.query(query, { limit: 8 }).then(results => {
+    showLoading(false);
+    displaySearchResults(results, query);
+  }).catch(error => {
+    console.error('Search error:', error);
+    showLoading(false);
+    showNoResults();
+  });
+}
+
+function displaySearchResults(results, query) {
+  const resultsList = document.querySelector('.search-results-list');
+  const noResults = document.querySelector('.search-no-results');
+  const footer = document.querySelector('.search-footer');
+  const resultsCount = document.querySelector('.results-count');
+  const viewAllLink = document.querySelector('.view-all-results');
+  
+  // Clear previous results
+  resultsList.innerHTML = '';
+  
+  if (results.products && results.products.length > 0) {
+    noResults.classList.add('hidden');
+    footer.classList.remove('hidden');
+    
+    // Display products
+    results.products.forEach((product, index) => {
+      const item = createSearchResultItem(product, index === 0);
+      resultsList.appendChild(item);
+    });
+    
+    // Update footer
+    if (resultsCount) resultsCount.textContent = results.total || results.products.length;
+    if (viewAllLink) viewAllLink.href = `/search/?q=${encodeURIComponent(query)}`;
+  } else {
+    noResults.classList.remove('hidden');
+    footer.classList.add('hidden');
+  }
+}
+
+function createSearchResultItem(product, highlight = false) {
+  const div = document.createElement('div');
+  div.className = `search-result-item flex items-center p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0 ${highlight ? 'highlighted bg-gray-50 dark:bg-gray-700' : ''}`;
+  div.dataset.url = product.url;
+  
+  div.innerHTML = `
+    <div class="flex-shrink-0 mr-3">
+      ${product.image ? 
+        `<img src="${product.image}" alt="${product.title}" class="h-12 w-12 object-cover rounded">` :
+        `<div class="h-12 w-12 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center">
+          <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+        </div>`
+      }
+    </div>
+    <div class="flex-1 min-w-0">
+      <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate">${product.title}</h4>
+      <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-1">${product.category || ''}</p>
+    </div>
+    <div class="flex-shrink-0 ml-3">
+      <span class="text-sm font-medium text-gray-900 dark:text-white">${product.price} {{ current_language_data.currency }}</span>
+    </div>
+  `;
+  
+  // Add click handler
+  div.addEventListener('click', function() {
+    window.location.href = product.url;
+  });
+  
+  return div;
+}
+
+function showSearchResults() {
+  if (searchResults) {
+    searchResults.classList.remove('opacity-0', 'invisible', 'translate-y-1');
+  }
+}
+
+function hideSearchResults() {
+  if (searchResults) {
+    searchResults.classList.add('opacity-0', 'invisible', 'translate-y-1');
+  }
+}
+
+function showLoading(show) {
+  const loading = document.querySelector('.search-loading');
+  const noResults = document.querySelector('.search-no-results');
+  const resultsList = document.querySelector('.search-results-list');
+  const footer = document.querySelector('.search-footer');
+  
+  if (loading) loading.classList.toggle('hidden', !show);
+  if (noResults) noResults.classList.add('hidden');
+  if (footer) footer.classList.add('hidden');
+  if (resultsList) resultsList.innerHTML = '';
+}
+
+function showNoResults() {
+  const noResults = document.querySelector('.search-no-results');
+  const footer = document.querySelector('.search-footer');
+  
+  if (noResults) noResults.classList.remove('hidden');
+  if (footer) footer.classList.add('hidden');
+}
+
+function clearSearch() {
+  if (searchInput) {
+    searchInput.value = '';
+    searchInput.focus();
+  }
+  if (clearButton) {
+    clearButton.style.display = 'none';
+  }
+  hideSearchResults();
+}
+
+// Close search results when clicking outside
+document.addEventListener('click', function(event) {
+  const searchBox = document.querySelector('.search-box');
+  if (searchBox && !searchBox.contains(event.target)) {
+    hideSearchResults();
+  }
+});
+
+// Initialize search functionality
+document.addEventListener('DOMContentLoaded', function() {
+  // Focus search input with Ctrl+K or Cmd+K
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      if (searchInput) {
+        searchInput.focus();
+      }
+    }
+  });
+});
+</script>

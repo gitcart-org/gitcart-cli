@@ -1,0 +1,158 @@
+<div class="checkout-page" style="max-width: 600px; margin: 0 auto;">
+    <h1>{{ 'Checkout' | t: current_language }}</h1>
+    
+    <!-- Order Summary -->
+    <div style="border: 1px solid #eee; padding: 20px; margin-bottom: 30px; border-radius: 4px;">
+        <h2>{{ 'Order Summary' | t: current_language }}</h2>
+        <div id="order-items">
+            <!-- Items will be loaded by JavaScript -->
+        </div>
+        <div style="border-top: 1px solid #eee; margin-top: 15px; padding-top: 15px;">
+            <strong>{{ 'Total' | t: current_language }}: <span id="order-total">0</span> {{ language.currency }}</strong>
+        </div>
+    </div>
+    
+    <!-- Customer Information -->
+    <form id="checkout-form">
+        <h2>{{ 'Customer Information' | t: current_language }}</h2>
+        
+        <div style="margin-bottom: 15px;">
+            <label for="email">{{ 'Email' | t: current_language }}</label><br>
+            <input type="email" id="email" name="email" required style="width: 100%;">
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div>
+                <label for="firstName">{{ 'First Name' | t: current_language }}</label><br>
+                <input type="text" id="firstName" name="firstName" required style="width: 100%;">
+            </div>
+            <div>
+                <label for="lastName">{{ 'Last Name' | t: current_language }}</label><br>
+                <input type="text" id="lastName" name="lastName" required style="width: 100%;">
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label for="phone">{{ 'Phone' | t: current_language }}</label><br>
+            <input type="tel" id="phone" name="phone" required style="width: 100%;">
+        </div>
+        
+        <!-- Shipping Address -->
+        <h2>{{ 'Shipping Address' | t: current_language }}</h2>
+        
+        <div style="margin-bottom: 15px;">
+            <label for="street">{{ 'Street Address' | t: current_language }}</label><br>
+            <input type="text" id="street" name="street" required style="width: 100%;">
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div>
+                <label for="city">{{ 'City' | t: current_language }}</label><br>
+                <input type="text" id="city" name="city" required style="width: 100%;">
+            </div>
+            <div>
+                <label for="zip">{{ 'ZIP Code' | t: current_language }}</label><br>
+                <input type="text" id="zip" name="zip" required style="width: 100%;">
+            </div>
+        </div>
+        
+        <!-- Shipping Method -->
+        <h2>{{ 'Shipping Method' | t: current_language }}</h2>
+        <div id="zone-shipping-methods"></div>
+        <div style="margin-bottom: 15px;">
+            <label>
+                <input type="radio" name="shipping" value="standard" checked>
+                {{ 'Standard Shipping' | t: current_language }} (149 {{ language.currency }})
+            </label><br>
+            <label>
+                <input type="radio" name="shipping" value="express">
+                {{ 'Express Shipping' | t: current_language }} (299 {{ language.currency }})
+            </label>
+        </div>
+        
+        <!-- Payment Method -->
+        <h2>{{ 'Payment Method' | t: current_language }}</h2>
+        <div id="zone-payment-methods"></div>
+        <div style="margin-bottom: 15px;">
+            <label>
+                <input type="radio" name="payment" value="card" checked>
+                {{ 'Credit Card' | t: current_language }}
+            </label><br>
+            <label>
+                <input type="radio" name="payment" value="bank">
+                {{ 'Bank Transfer' | t: current_language }}
+            </label><br>
+            <label>
+                <input type="radio" name="payment" value="cod">
+                {{ 'Cash on Delivery' | t: current_language }}
+            </label>
+        </div>
+        
+        <!-- Submit -->
+        <button type="submit" style="width: 100%; padding: 15px; font-size: 18px; margin-top: 20px;">
+            {{ 'Complete Order' | t: current_language }}
+        </button>
+    </form>
+</div>
+
+<script>
+// Minimal checkout functionality
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof GitCart === 'undefined') return;
+    
+    // Load cart items
+    const items = GitCart.cart.getItems();
+    const itemsContainer = document.getElementById('order-items');
+    
+    if (items.length === 0) {
+        window.location.href = '/cart/';
+        return;
+    }
+    
+    // Display items
+    items.forEach(item => {
+        const div = document.createElement('div');
+        div.style.marginBottom = '10px';
+        div.innerHTML = `${item.sku} - ${item.quantity}x`;
+        itemsContainer.appendChild(div);
+    });
+    
+    // Calculate total
+    GitCart.cart.getTotal().then(total => {
+        document.getElementById('order-total').textContent = total;
+    });
+    
+    // Handle form submission
+    document.getElementById('checkout-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const order = GitCart.checkout.start();
+        
+        // Set customer data
+        GitCart.checkout.setCustomer({
+            firstName: formData.get('firstName'),
+            lastName: formData.get('lastName'),
+            email: formData.get('email'),
+            phone: formData.get('phone')
+        });
+        
+        // Set shipping
+        GitCart.checkout.setShipping(formData.get('shipping'), {
+            street: formData.get('street'),
+            city: formData.get('city'),
+            zip: formData.get('zip'),
+            country: 'CZ'
+        });
+        
+        // Set payment
+        GitCart.checkout.setPayment(formData.get('payment'));
+        
+        // Complete order
+        const completedOrder = await GitCart.checkout.complete();
+        
+        alert('Order completed! Order ID: ' + completedOrder.id);
+        window.location.href = '/';
+    });
+});
+</script>

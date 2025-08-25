@@ -1,0 +1,191 @@
+<div class="product-page">
+    <div id="zone-product-start"></div>
+    <div class="container">
+        <!-- Breadcrumbs -->
+        <nav class="breadcrumbs">
+            <a href="{{ '/' | url: current_language }}">{{ 'Home' | t: current_language }}</a>
+            <span>/</span>
+            <a href="{{ '/products' | url: current_language }}">{{ 'Products' | t: current_language }}</a>
+            <span>/</span>
+            <span>{{ product.metadata.title }}</span>
+        </nav>
+        
+        <div class="product-detail">
+            <!-- Product Images -->
+            <div class="product-images">
+                {% if product.metadata.images.size > 0 %}
+                <div class="main-image">
+                    <img src="{{ product.metadata.images[0] | img_url: 'large' }}" 
+                         alt="{{ product.metadata.title }}" 
+                         id="main-product-image">
+                </div>
+                
+                {% if product.metadata.images.size > 1 %}
+                <div class="image-thumbnails">
+                    {% for image in product.metadata.images %}
+                    <img src="{{ image | img_url: 'thumb' }}" 
+                         alt="{{ product.metadata.title }}" 
+                         data-large="{{ image | img_url: 'large' }}"
+                         class="thumbnail {% if forloop.first %}active{% endif %}">
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="no-image">
+                    <p>{{ 'No image available' | t: current_language }}</p>
+                </div>
+                {% endif %}
+            </div>
+            <div id="zone-after-product-images"></div>
+            
+            <!-- Product Info -->
+            <div class="product-info">
+                <h1>{{ product.metadata.title }}</h1>
+                
+                <!-- Price -->
+                <div class="product-price-box">
+                    {% if product.isOnSale %}
+                    <span class="price-sale">{{ product.metadata.sale_price | money: language.currency }}</span>
+                    <span class="price-original">{{ product.metadata.price | money: language.currency }}</span>
+                    <span class="badge sale">-{{ product.discount }}%</span>
+                    {% else %}
+                    <span class="price">{{ product.metadata.price | money: language.currency }}</span>
+                    {% endif %}
+                </div>
+                <div id="zone-after-product-price"></div>
+                
+                <!-- Stock Status -->
+                <div class="stock-status">
+                    {% if product.inStock %}
+                    <span class="in-stock">✓ {{ 'In Stock' | t: current_language }} ({{ product.metadata.stock }} {{ 'available' | t: current_language }})</span>
+                    {% else %}
+                    <span class="out-of-stock">✗ {{ 'Out of Stock' | t: current_language }}</span>
+                    {% endif %}
+                </div>
+                
+                <!-- SKU -->
+                <div class="product-sku">
+                    <strong>{{ 'SKU' | t: current_language }}:</strong> {{ product.metadata.sku }}
+                </div>
+                
+                <!-- Short Description -->
+                {% if product.excerpt %}
+                <div class="product-excerpt">
+                    {{ product.excerpt }}
+                </div>
+                {% endif %}
+                
+                <!-- Variants -->
+                {% if product.metadata.variants.size > 0 %}
+                <div class="product-variants">
+                    <label for="variant-select">{{ 'Choose Variant' | t: current_language }}:</label>
+                    <select id="variant-select" class="variant-selector">
+                        <option value="">{{ 'Select' | t: current_language }}</option>
+                        {% for variant in product.metadata.variants %}
+                        <option value="{{ variant.sku }}" 
+                                data-price="{{ variant.price | default: product.metadata.price }}"
+                                data-stock="{{ variant.stock | default: product.metadata.stock }}">
+                            {{ variant.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+                
+                <!-- Add to Cart -->
+                <div class="product-actions">
+                    {% if product.inStock %}
+                    <div class="quantity-selector">
+                        <button class="qty-btn minus">-</button>
+                        <input type="number" id="quantity" value="1" min="1" max="{{ product.metadata.stock }}">
+                        <button class="qty-btn plus">+</button>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-large add-to-cart" 
+                            data-product-id="{{ product.id }}"
+                            data-product-sku="{{ product.metadata.sku }}"
+                            data-product-title="{{ product.metadata.title }}"
+                            data-product-price="{{ product.metadata.sale_price | default: product.metadata.price }}">
+                        {{ 'Add to Cart' | t: current_language }}
+                    </button>
+                    {% else %}
+                    <button class="btn btn-secondary btn-large" disabled>
+                        {{ 'Out of Stock' | t: current_language }}
+                    </button>
+                    {% endif %}
+                </div>
+                <div id="zone-after-add-to-cart"></div>
+                
+                <!-- Tags -->
+                {% if product.metadata.tags.size > 0 %}
+                <div class="product-tags">
+                    <strong>{{ 'Tags' | t: current_language }}:</strong>
+                    {% for tag in product.metadata.tags %}
+                    <a href="{{ '/products?tag=' | append: tag | url: current_language }}" class="tag">
+                        {{ tag }}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Product Description -->
+        <div class="product-description">
+            <h2>{{ 'Description' | t: current_language }}</h2>
+            <div class="content">
+                {{ product.html }}
+            </div>
+            <div id="zone-after-product-description"></div>
+        </div>
+        
+        <!-- Product Attributes -->
+        {% if product.metadata.attributes %}
+        <div class="product-attributes">
+            <h2>{{ 'Specifications' | t: current_language }}</h2>
+            <table class="attributes-table">
+                {% for attr in product.metadata.attributes %}
+                <tr>
+                    <th>{{ attr[0] | humanize }}:</th>
+                    <td>{{ attr[1] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% endif %}
+        
+        <!-- Related Products -->
+        {% assign related = all_products | where: 'tags', product.metadata.tags[0] | limit: 4 %}
+        {% if related.size > 1 %}
+        <div class="related-products">
+            <h2>{{ 'Related Products' | t: current_language }}</h2>
+            <div class="products-grid">
+                {% for item in related %}
+                {% unless item.id == product.id %}
+                <div class="product-card">
+                    {% if item.metadata.images[0] %}
+                    <div class="product-image">
+                        <img src="{{ item.metadata.images[0] | img_url: 'small' }}" alt="{{ item.metadata.title }}">
+                    </div>
+                    {% endif %}
+                    <h3>{{ item.metadata.title }}</h3>
+                    <div class="product-price">
+                        {% if item.isOnSale %}
+                        <span class="price-sale">{{ item.metadata.sale_price | money: language.currency }}</span>
+                        {% else %}
+                        <span class="price">{{ item.metadata.price | money: language.currency }}</span>
+                        {% endif %}
+                    </div>
+                    <a href="{{ item.url | url: current_language }}" class="btn btn-secondary">
+                        {{ 'View Details' | t: current_language }}
+                    </a>
+                </div>
+                {% endunless %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <div id="zone-product-end"></div>
+    </div>
+</div>

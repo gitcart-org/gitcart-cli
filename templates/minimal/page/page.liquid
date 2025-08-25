@@ -1,0 +1,13 @@
+<div class="page-content">
+    <h1>{{ page.metadata.title }}</h1>
+    
+    {% if page.metadata.description %}
+    <p class="page-description" style="font-size: 1.1em; color: #666; margin-bottom: 30px;">
+        {{ page.metadata.description }}
+    </p>
+    {% endif %}
+    
+    <div class="content">
+        {{ page.html }}
+    </div>
+</div>

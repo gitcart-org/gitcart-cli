@@ -1,0 +1,144 @@
+/*
+ * RTL Support for GitCart Default Template
+ * Applied when current_language_data.rtl is true
+ */
+
+/* Text direction and alignment */
+[dir="rtl"] {
+  text-align: right;
+}
+
+/* Header layout adjustments */
+[dir="rtl"] .header-content {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .logo {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+/* Navigation alignment */
+[dir="rtl"] .main-nav ul {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .main-nav li {
+  margin-right: 0;
+  margin-left: 1rem;
+}
+
+/* Language switcher */
+[dir="rtl"] .language-switcher {
+  order: -1;
+}
+
+/* Cart widget */
+[dir="rtl"] .header-cart {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+/* Product cards */
+[dir="rtl"] .product-card {
+  text-align: right;
+}
+
+[dir="rtl"] .product-price {
+  text-align: right;
+}
+
+/* Forms */
+[dir="rtl"] .form-group {
+  text-align: right;
+}
+
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] select {
+  text-align: right;
+}
+
+/* Footer layout */
+[dir="rtl"] .footer-content {
+  direction: rtl;
+}
+
+[dir="rtl"] .footer-section {
+  text-align: right;
+}
+
+/* Pagination */
+[dir="rtl"] .pagination {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .pagination a {
+  margin-right: 0;
+  margin-left: 0.25rem;
+}
+
+/* Breadcrumbs */
+[dir="rtl"] .breadcrumb {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .breadcrumb::after {
+  content: "‹";
+}
+
+/* Shopping cart */
+[dir="rtl"] .cart-item {
+  text-align: right;
+}
+
+[dir="rtl"] .cart-item-image {
+  margin-right: 0;
+  margin-left: 1rem;
+}
+
+[dir="rtl"] .cart-summary {
+  text-align: right;
+}
+
+/* Search */
+[dir="rtl"] .search-box input {
+  padding-right: 2.5rem;
+  padding-left: 1rem;
+}
+
+[dir="rtl"] .search-box .search-icon {
+  right: auto;
+  left: 0.75rem;
+}
+
+/* Category filters */
+[dir="rtl"] .filters {
+  text-align: right;
+}
+
+[dir="rtl"] .filter-group {
+  text-align: right;
+}
+
+/* Product gallery */
+[dir="rtl"] .product-gallery-thumbs {
+  flex-direction: row-reverse;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  [dir="rtl"] .header-content {
+    flex-direction: column;
+  }
+  
+  [dir="rtl"] .main-nav ul {
+    flex-direction: column;
+    text-align: right;
+  }
+  
+  [dir="rtl"] .main-nav li {
+    margin-left: 0;
+    margin-bottom: 0.5rem;
+  }
+}

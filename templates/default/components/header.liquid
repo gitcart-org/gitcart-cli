@@ -1,0 +1,162 @@
+<header class="site-header" role="banner">
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between py-4">
+      <!-- Logo -->
+      <div class="header-logo">
+        <a href="{{ '/' | url: current_language }}" class="flex items-center space-x-2">
+          {% if site.logo %}
+            <img src="{{ site.logo | asset_url }}" alt="{{ site.name }}" class="h-8 w-auto">
+          {% else %}
+            <span class="text-xl font-bold text-gray-900 dark:text-white">{{ site.name }}</span>
+          {% endif %}
+        </a>
+      </div>
+      
+      <!-- Mobile Menu Toggle -->
+      <button class="lg:hidden mobile-menu-toggle p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+              onclick="toggleMobileMenu()" 
+              aria-label="Toggle navigation">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+      
+      <!-- Desktop Navigation -->
+      <nav class="hidden lg:flex items-center space-x-8" role="navigation">
+        <!-- Categories -->
+        {% for category in site.categories %}
+          {% if category.metadata.featured %}
+            <div class="relative group">
+              <a href="{{ category.url }}" 
+                 class="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition-colors">
+                {{ category.metadata.title }}
+              </a>
+              
+              {% if category.subcategories.size > 0 %}
+                <div class="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  <div class="py-1">
+                    {% for subcategory in category.subcategories %}
+                      <a href="{{ subcategory.url }}" 
+                         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        {{ subcategory.metadata.title }}
+                      </a>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+        
+        <!-- Custom Navigation -->
+        {% for link in navigation.header %}
+          <a href="{{ link.url }}" 
+             class="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition-colors">
+            {% if link.icon %}
+              <i class="icon-{{ link.icon }} mr-1"></i>
+            {% endif %}
+            {{ link.title }}
+          </a>
+        {% endfor %}
+      </nav>
+      
+      <!-- Header Actions -->
+      <div class="flex items-center space-x-4">
+        <!-- Language Switcher -->
+        {% if site.languages.size > 1 %}
+          <div class="relative">
+            <button class="lang-toggle flex items-center space-x-1 text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400" 
+                    onclick="toggleLangMenu()">
+              <span>{{ current_language_data.short | upcase }}</span>
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            <div class="lang-menu absolute right-0 mt-2 w-32 bg-white dark:bg-gray-800 rounded-md shadow-lg opacity-0 invisible transition-all duration-200">
+              <div class="py-1">
+                {% for lang_code, language in site.languages %}
+                  {% unless lang_code == current_language %}
+                    <a href="{{ page.url | url: lang_code }}"
+                       class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                      {{ language.name }}
+                    </a>
+                  {% endunless %}
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        
+        <!-- Search -->
+        <div class="search-container">
+          {% include 'components/search-box' %}
+        </div>
+        
+        <!-- Cart Widget -->
+        <div class="cart-container">
+          {% include 'components/cart-widget' %}
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav lg:hidden hidden" role="navigation">
+      <div class="px-2 pt-2 pb-3 space-y-1 bg-gray-50 dark:bg-gray-800 rounded-lg mt-2">
+        <!-- Categories -->
+        {% for category in site.categories %}
+          {% if category.metadata.featured %}
+            <a href="{{ category.url }}" 
+               class="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
+              {{ category.metadata.title }}
+            </a>
+            
+            {% if category.subcategories.size > 0 %}
+              <div class="ml-4 space-y-1">
+                {% for subcategory in category.subcategories %}
+                  <a href="{{ subcategory.url }}" 
+                     class="block px-3 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
+                    {{ subcategory.metadata.title }}
+                  </a>
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+        
+        <!-- Custom Navigation -->
+        {% for link in navigation.header %}
+          <a href="{{ link.url }}" 
+             class="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
+            {% if link.icon %}
+              <i class="icon-{{ link.icon }} mr-1"></i>
+            {% endif %}
+            {{ link.title }}
+          </a>
+        {% endfor %}
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+function toggleMobileMenu() {
+  const mobileNav = document.querySelector('.mobile-nav');
+  mobileNav.classList.toggle('hidden');
+}
+
+function toggleLangMenu() {
+  const langMenu = document.querySelector('.lang-menu');
+  langMenu.classList.toggle('opacity-0');
+  langMenu.classList.toggle('invisible');
+}
+
+// Close menus when clicking outside
+document.addEventListener('click', function(event) {
+  const langToggle = document.querySelector('.lang-toggle');
+  const langMenu = document.querySelector('.lang-menu');
+  
+  if (langToggle && langMenu && !langToggle.contains(event.target)) {
+    langMenu.classList.add('opacity-0', 'invisible');
+  }
+});
+</script>

@@ -1,0 +1,193 @@
+---
+layout: default
+---
+
+<article class="product-detail">
+  <div id="zone-product-start"></div>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" style="margin-bottom: 20px; font-size: 14px;">
+    <a href="/">Domů</a> / 
+    {% if product.category %}
+      <a href="{{ product.category.url }}">{{ product.category.title }}</a> / 
+    {% endif %}
+    <span>{{ product.title }}</span>
+  </nav>
+
+  <!-- Product Info -->
+  <div class="product-info" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px;">
+    
+    <!-- Product Images -->
+    <div class="product-images">
+      {% if product.images.size > 0 %}
+        <img src="{{ product.images[0] | asset_url }}" 
+             alt="{{ product.images[0].alt | default: product.title }}"
+             style="width: 100%; height: auto; border-radius: 4px;">
+        
+        {% if product.images.size > 1 %}
+          <div class="thumbnail-images" style="display: flex; gap: 10px; margin-top: 10px;">
+            {% for image in product.images offset: 1 %}
+              <img src="{{ image | asset_url }}" 
+                   alt="{{ image.alt | default: product.title }}"
+                   style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; cursor: pointer;">
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% else %}
+        <div style="background: #f0f0f0; height: 300px; display: flex; align-items: center; justify-content: center; color: #666; border-radius: 4px;">
+          Bez obrázku
+        </div>
+      {% endif %}
+      
+      <div id="zone-after-product-images"></div>
+    </div>
+
+    <!-- Product Details -->
+    <div class="product-details">
+      <h1>{{ product.title }}</h1>
+      
+      {% if product.sku %}
+        <p style="color: #666; margin-bottom: 10px;">SKU: {{ product.sku }}</p>
+      {% endif %}
+
+      <!-- Price -->
+      <div class="product-price" style="margin-bottom: 20px;">
+        {% if product.sale_price and product.sale_price < product.price %}
+          <span style="font-size: 1.5rem; font-weight: bold; color: #e74c3c;">
+            {{ product.sale_price }} {{ product.currency }}
+          </span>
+          <span style="text-decoration: line-through; color: #999; margin-left: 10px;">
+            {{ product.price }} {{ product.currency }}
+          </span>
+        {% else %}
+          <span style="font-size: 1.5rem; font-weight: bold; color: #0066cc;">
+            {{ product.price }} {{ product.currency }}
+          </span>
+        {% endif %}
+      </div>
+
+      <!-- Stock Status -->
+      <div class="product-stock" style="margin-bottom: 20px;">
+        {% if product.stock > 0 %}
+          <span style="color: #27ae60;">✓ Skladem ({{ product.stock }} ks)</span>
+        {% else %}
+          <span style="color: #e74c3c;">Vyprodáno</span>
+        {% endif %}
+      </div>
+
+      <!-- Add to Cart -->
+      {% if product.stock > 0 %}
+        <form class="add-to-cart-form" onsubmit="return addToCart(event)" style="margin-bottom: 20px;">
+          <input type="hidden" name="sku" value="{{ product.sku }}">
+          <input type="hidden" name="title" value="{{ product.title }}">
+          <input type="hidden" name="price" value="{{ product.sale_price | default: product.price }}">
+          
+          <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <label for="quantity" style="display: flex; align-items: center; gap: 5px;">
+              Množství:
+              <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}" style="width: 80px;">
+            </label>
+          </div>
+          
+          <button type="submit" style="padding: 15px 30px; font-size: 1rem; width: 100%;">
+            Přidat do košíku
+          </button>
+        </form>
+      {% else %}
+        <button disabled style="padding: 15px 30px; font-size: 1rem; width: 100%; background: #ccc; cursor: not-allowed;">
+          Vyprodáno
+        </button>
+      {% endif %}
+
+      <div id="zone-after-product-price"></div>
+      <div id="zone-after-add-to-cart"></div>
+
+      <!-- Product Tags -->
+      {% if product.tags.size > 0 %}
+        <div class="product-tags" style="margin-top: 20px;">
+          <strong>Štítky:</strong>
+          {% for tag in product.tags %}
+            <span style="background: #f0f0f0; padding: 5px 10px; border-radius: 3px; margin-right: 5px; font-size: 12px;">
+              {{ tag }}
+            </span>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+
+  <!-- Product Description -->
+  <div class="product-description">
+    {{ product.content }}
+  </div>
+
+  <div id="zone-after-product-description"></div>
+
+  <!-- Specifications -->
+  {% if product.specifications %}
+    <div class="product-specifications" style="margin-top: 40px;">
+      <h2>Specifikace</h2>
+      <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        {% for spec in product.specifications %}
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 10px; font-weight: bold; width: 200px;">{{ spec[0] | capitalize }}</td>
+            <td style="padding: 10px;">{{ spec[1] }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  {% endif %}
+
+  <div id="zone-product-end"></div>
+</article>
+
+<script>
+function addToCart(event) {
+  event.preventDefault();
+  
+  if (typeof GitCart === 'undefined') {
+    alert('GitCart není načteno');
+    return false;
+  }
+  
+  const form = event.target;
+  const sku = form.sku.value;
+  const title = form.title.value;
+  const price = parseFloat(form.price.value);
+  const quantity = parseInt(form.quantity.value);
+  
+  try {
+    GitCart.cart.add(sku, quantity, {
+      title: title,
+      price: price,
+      image: '{{ product.images[0] | asset_url }}',
+      url: '{{ product.url }}',
+      category: '{{ product.category.title }}'
+    });
+    
+    alert('Produkt byl přidán do košíku!');
+  } catch (error) {
+    alert('Chyba při přidávání do košíku: ' + error.message);
+  }
+  
+  return false;
+}
+</script>
+
+<!-- Mobile Responsive CSS -->
+<style>
+@media (max-width: 768px) {
+  .product-info {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  
+  .product-specifications table {
+    font-size: 14px;
+  }
+  
+  .product-specifications td {
+    padding: 8px !important;
+  }
+}
+</style>

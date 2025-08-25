@@ -1,0 +1,242 @@
+---
+layout: default
+---
+
+<div class="homepage">
+  <div id="zone-homepage-start"></div>
+  
+  <!-- Hero Section -->
+  <section class="hero" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 60px 20px; margin: -20px -20px 40px -20px; text-align: center; border-radius: 8px;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 15px; color: white;">
+      {% if site.name %}{{ site.name }}{% else %}Vítejte v našem e-shopu{% endif %}
+    </h1>
+    {% if site.description %}
+      <p style="font-size: 1.2rem; margin-bottom: 25px; opacity: 0.9;">
+        {{ site.description }}
+      </p>
+    {% else %}
+      <p style="font-size: 1.2rem; margin-bottom: 25px; opacity: 0.9;">
+        Kvalitní produkty za skvělé ceny
+      </p>
+    {% endif %}
+    
+    {% if site.featured_categories.size > 0 %}
+      <a href="{{ site.featured_categories[0].url }}" 
+         style="display: inline-block; background: white; color: #667eea; padding: 12px 30px; border-radius: 25px; text-decoration: none; font-weight: bold; margin-top: 10px;">
+        Prohlédnout produkty
+      </a>
+    {% endif %}
+  </section>
+
+  <div id="zone-homepage-after-hero"></div>
+
+  <!-- Featured Categories -->
+  {% assign featured_categories = site.categories | where: 'featured', true %}
+  {% if featured_categories.size > 0 %}
+    <section class="featured-categories" style="margin-bottom: 50px;">
+      <h2 style="text-align: center; margin-bottom: 30px;">Hlavní kategorie</h2>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+        {% for category in featured_categories limit: 6 %}
+          <a href="{{ category.url }}" 
+             class="category-card" 
+             style="display: block; text-decoration: none; color: inherit; border: 1px solid #eee; border-radius: 8px; padding: 25px; text-align: center; transition: all 0.3s ease; position: relative; overflow: hidden;">
+            
+            {% if category.banner_image %}
+              <div style="width: 60px; height: 60px; background: #f0f0f0; border-radius: 50%; margin: 0 auto 15px; background-image: url('{{ category.banner_image | asset_url }}'); background-size: cover; background-position: center;"></div>
+            {% else %}
+              <div style="width: 60px; height: 60px; background: linear-gradient(45deg, #667eea, #764ba2); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 24px;">
+                {{ category.title | slice: 0, 1 | upcase }}
+              </div>
+            {% endif %}
+            
+            <h3 style="margin-bottom: 8px; font-size: 1.1rem;">{{ category.title }}</h3>
+            
+            {% if category.description %}
+              <p style="font-size: 14px; color: #666; margin-bottom: 10px;">
+                {{ category.description | truncate: 80 }}
+              </p>
+            {% endif %}
+            
+            {% if category.product_count %}
+              <p style="font-size: 12px; color: #0066cc; font-weight: bold;">
+                {{ category.product_count }} produktů
+              </p>
+            {% endif %}
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  <div id="zone-homepage-before-products"></div>
+
+  <!-- Featured Products -->
+  {% assign featured_products = site.products | where: 'featured', true %}
+  {% if featured_products.size > 0 %}
+    <section class="featured-products" style="margin-bottom: 50px;">
+      <h2 style="text-align: center; margin-bottom: 30px;">Doporučené produkty</h2>
+      
+      <div class="products-grid">
+        {% for product in featured_products limit: 8 %}
+          <article class="product-card" style="position: relative;">
+            <!-- Featured Badge -->
+            <span style="position: absolute; top: 10px; left: 10px; background: #e74c3c; color: white; padding: 3px 8px; font-size: 11px; border-radius: 3px; z-index: 1;">
+              DOPORUČENO
+            </span>
+            
+            <!-- Product Image -->
+            <div style="margin-bottom: 10px;">
+              {% if product.images.size > 0 %}
+                <a href="{{ product.url }}">
+                  <img src="{{ product.images[0] | asset_url }}" 
+                       alt="{{ product.images[0].alt | default: product.title }}"
+                       style="width: 100%; height: 200px; object-fit: cover; border-radius: 4px;">
+                </a>
+              {% else %}
+                <div style="width: 100%; height: 200px; background: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #999;">
+                  Bez obrázku
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Product Info -->
+            <h3 style="margin-bottom: 8px; font-size: 1rem;">
+              <a href="{{ product.url }}" style="color: inherit; text-decoration: none;">
+                {{ product.title }}
+              </a>
+            </h3>
+            
+            <!-- Price -->
+            <div style="margin-bottom: 10px;">
+              {% if product.sale_price and product.sale_price < product.price %}
+                <span style="font-weight: bold; color: #e74c3c; font-size: 1.1rem;">
+                  {{ product.sale_price }} {{ product.currency }}
+                </span>
+                <br>
+                <span style="text-decoration: line-through; color: #999; font-size: 0.9rem;">
+                  {{ product.price }} {{ product.currency }}
+                </span>
+              {% else %}
+                <span style="font-weight: bold; color: #0066cc; font-size: 1.1rem;">
+                  {{ product.price }} {{ product.currency }}
+                </span>
+              {% endif %}
+            </div>
+
+            <!-- Actions -->
+            <div style="display: flex; gap: 5px;">
+              {% if product.stock > 0 %}
+                <button onclick="quickAddToCart('{{ product.sku }}', '{{ product.title }}', {{ product.sale_price | default: product.price }})" 
+                        style="flex: 1; padding: 8px; font-size: 12px; background: #0066cc; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                  Do košíku
+                </button>
+              {% else %}
+                <button disabled 
+                        style="flex: 1; padding: 8px; font-size: 12px; background: #ccc; color: white; border: none; border-radius: 3px; cursor: not-allowed;">
+                  Vyprodáno
+                </button>
+              {% endif %}
+              
+              <a href="{{ product.url }}" 
+                 style="padding: 8px 12px; font-size: 12px; background: transparent; color: #0066cc; border: 1px solid #0066cc; border-radius: 3px; text-decoration: none;">
+                Detail
+              </a>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+      
+      <div style="text-align: center; margin-top: 30px;">
+        <a href="/products/" 
+           style="display: inline-block; background: #0066cc; color: white; padding: 12px 30px; border-radius: 25px; text-decoration: none; font-weight: bold;">
+          Zobrazit všechny produkty
+        </a>
+      </div>
+    </section>
+  {% endif %}
+
+  <div id="zone-homepage-before-about"></div>
+
+  <!-- About Section -->
+  <section class="about" style="background: #f8f9fa; margin: 50px -20px 0 -20px; padding: 40px 20px; text-align: center;">
+    <h2 style="margin-bottom: 20px;">Proč nakupovat u nás?</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; max-width: 800px; margin: 0 auto;">
+      <div>
+        <div style="width: 50px; height: 50px; background: #0066cc; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+          ✓
+        </div>
+        <h3 style="margin-bottom: 8px; font-size: 1rem;">Rychlá doprava</h3>
+        <p style="font-size: 14px; color: #666;">Doručení do 24 hodin po celé ČR</p>
+      </div>
+      
+      <div>
+        <div style="width: 50px; height: 50px; background: #0066cc; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+          💰
+        </div>
+        <h3 style="margin-bottom: 8px; font-size: 1rem;">Nejlepší ceny</h3>
+        <p style="font-size: 14px; color: #666;">Garantujeme nejnižší ceny na trhu</p>
+      </div>
+      
+      <div>
+        <div style="width: 50px; height: 50px; background: #0066cc; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+          🛡️
+        </div>
+        <h3 style="margin-bottom: 8px; font-size: 1rem;">2 roky záruky</h3>
+        <p style="font-size: 14px; color: #666;">Na všechny produkty poskytujeme záruku</p>
+      </div>
+    </div>
+  </section>
+
+  <div id="zone-homepage-end"></div>
+</div>
+
+<script>
+function quickAddToCart(sku, title, price) {
+  if (typeof GitCart === 'undefined') {
+    alert('GitCart není načteno');
+    return;
+  }
+  
+  try {
+    GitCart.cart.add(sku, 1, {
+      title: title,
+      price: price
+    });
+    
+    alert('Produkt "' + title + '" byl přidán do košíku!');
+  } catch (error) {
+    alert('Chyba při přidávání do košíku: ' + error.message);
+  }
+}
+</script>
+
+<!-- Category Card Hover Effect -->
+<style>
+.category-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-color: #0066cc;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 40px 15px !important;
+    margin: -10px -10px 30px -10px !important;
+  }
+  
+  .hero h1 {
+    font-size: 2rem !important;
+  }
+  
+  .hero p {
+    font-size: 1rem !important;
+  }
+  
+  .about {
+    margin: 40px -10px 0 -10px !important;
+    padding: 30px 15px !important;
+  }
+}
+</style>

@@ -1,0 +1,181 @@
+<div class="category-page">
+    <div id="zone-category-start"></div>
+    <div class="container">
+        <!-- Breadcrumbs -->
+        <nav class="breadcrumbs">
+            <a href="{{ '/' | url: current_language }}">{{ 'Home' | t: current_language }}</a>
+            <span>/</span>
+            <a href="{{ '/categories' | url: current_language }}">{{ 'Categories' | t: current_language }}</a>
+            {% for crumb in category.breadcrumbs %}
+            <span>/</span>
+            {% if forloop.last %}
+            <span>{{ crumb.title }}</span>
+            {% else %}
+            <a href="{{ crumb.url | url: current_language }}">{{ crumb.title }}</a>
+            {% endif %}
+            {% endfor %}
+        </nav>
+        
+        <!-- Category Header -->
+        <div class="category-header">
+            <h1>{{ category.metadata.title }}</h1>
+            {% if category.metadata.description %}
+            <p class="category-description">{{ category.metadata.description }}</p>
+            {% endif %}
+            
+            {% if category.metadata.image %}
+            <div class="category-banner">
+                <img src="{{ category.metadata.image | img_url: 'xlarge' }}" alt="{{ category.metadata.title }}">
+            </div>
+            {% endif %}
+        </div>
+        
+        <div id="zone-after-category-header"></div>
+        
+        <!-- Subcategories -->
+        {% if subcategories.size > 0 %}
+        <div class="subcategories">
+            <h2>{{ 'Subcategories' | t: current_language }}</h2>
+            <div class="subcategory-grid">
+                {% for subcat in subcategories %}
+                <div class="subcategory-card">
+                    {% if subcat.metadata.image %}
+                    <img src="{{ subcat.metadata.image | img_url: 'small' }}" alt="{{ subcat.metadata.title }}">
+                    {% endif %}
+                    <h3>{{ subcat.metadata.title }}</h3>
+                    <p>{{ subcat.totalProductCount }} {{ 'products' | t: current_language }}</p>
+                    <a href="{{ subcat.url | url: current_language }}" class="btn btn-secondary">
+                        {{ 'View Category' | t: current_language }}
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Filters and Sorting -->
+        <div class="products-toolbar">
+            <div class="toolbar-left">
+                <span class="product-count">
+                    {% if pagination %}
+                        {% if pagination.totalItems == 1 %}
+                            {{ pagination.totalItems }} {{ 'product' | t: current_language }}
+                        {% else %}
+                            {{ pagination.totalItems }} {{ 'products' | t: current_language }}
+                        {% endif %}
+                        {% if pagination.totalPages > 1 %}
+                            ({{ 'page' | t: current_language }} {{ pagination.currentPage }} {{ 'of' | t: current_language }} {{ pagination.totalPages }})
+                        {% endif %}
+                    {% else %}
+                        {% if products.size == 1 %}
+                            {{ products.size }} {{ 'product' | t: current_language }}
+                        {% else %}
+                            {{ products.size }} {{ 'products' | t: current_language }}
+                        {% endif %}
+                    {% endif %}
+                </span>
+            </div>
+            
+            <div class="toolbar-right">
+                <!-- Sort -->
+                <div class="sort-by">
+                    <label for="sort">{{ 'Sort by' | t: current_language }}:</label>
+                    <select id="sort" class="sort-select">
+                        <option value="title-asc">{{ 'Name A-Z' | t: current_language }}</option>
+                        <option value="title-desc">{{ 'Name Z-A' | t: current_language }}</option>
+                        <option value="price-asc">{{ 'Price Low to High' | t: current_language }}</option>
+                        <option value="price-desc">{{ 'Price High to Low' | t: current_language }}</option>
+                        <option value="featured">{{ 'Featured' | t: current_language }}</option>
+                    </select>
+                </div>
+                
+                <!-- View Mode -->
+                <div class="view-mode">
+                    <button class="view-grid active" title="{{ 'Grid View' | t: current_language }}">⊞</button>
+                    <button class="view-list" title="{{ 'List View' | t: current_language }}">☰</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="zone-before-products"></div>
+        
+        <!-- Products Grid -->
+        {% if products.size > 0 %}
+        <div class="products-grid" id="products-container">
+            {% for product in products %}
+            <div class="product-card">
+                {% if product.metadata.images[0] %}
+                <div class="product-image">
+                    <a href="{{ product.url | url: current_language }}">
+                        <img src="{{ product.metadata.images[0] | img_url: 'medium' }}" alt="{{ product.metadata.title }}">
+                    </a>
+                    {% if product.isOnSale %}
+                    <span class="badge sale">-{{ product.discount }}%</span>
+                    {% endif %}
+                    {% if product.metadata.featured %}
+                    <span class="badge featured">{{ 'Featured' | t: current_language }}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+                
+                <div class="product-info">
+                    <h3>
+                        <a href="{{ product.url | url: current_language }}">
+                            {{ product.metadata.title }}
+                        </a>
+                    </h3>
+                    
+                    <p class="product-excerpt">{{ product.excerpt | truncate_words: 15 }}</p>
+                    
+                    <div class="product-price">
+                        {% if product.isOnSale %}
+                        <span class="price-sale">{{ product.metadata.sale_price | money: language.currency }}</span>
+                        <span class="price-original">{{ product.metadata.price | money: language.currency }}</span>
+                        {% else %}
+                        <span class="price">{{ product.metadata.price | money: language.currency }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="product-actions">
+                        <div id="zone-product-card-actions"></div>
+                        {% if product.inStock %}
+                        <button class="btn btn-primary quick-add" 
+                                data-product-id="{{ product.id }}"
+                                data-product-sku="{{ product.metadata.sku }}"
+                                data-product-title="{{ product.metadata.title }}"
+                                data-product-price="{{ product.metadata.sale_price | default: product.metadata.price }}">
+                            {{ 'Add to Cart' | t: current_language }}
+                        </button>
+                        {% else %}
+                        <span class="out-of-stock">{{ 'Out of Stock' | t: current_language }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% include 'components/pagination', pagination: pagination %}
+        
+        {% else %}
+        <div class="no-products">
+            <p>{{ 'No products found in this category' | t: current_language }}</p>
+            <a href="{{ '/' | url: current_language }}" class="btn btn-primary">
+                {{ 'Continue Shopping' | t: current_language }}
+            </a>
+        </div>
+        {% endif %}
+        
+        <div id="zone-after-products"></div>
+        
+        <div id="zone-category-end"></div>
+        
+        <!-- Category Content -->
+        {% if category.html %}
+        <div class="category-content">
+            {{ category.html }}
+        </div>
+        {% endif %}
+    </div>
+</div>

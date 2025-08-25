@@ -1,0 +1,161 @@
+{% comment %}
+Pagination component for GitCart
+Usage: {% include 'components/pagination', pagination: pagination %}
+{% endcomment %}
+
+{% if pagination and pagination.showNumbers %}
+<nav class="pagination-nav" aria-label="Pagination Navigation">
+  <div class="pagination-container">
+    
+    {% if pagination.showPrevNext and pagination.hasPrev %}
+      <a href="{{ pagination.prevUrl }}" 
+         class="pagination-btn pagination-prev" 
+         rel="prev" 
+         aria-label="Previous page">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Previous
+      </a>
+    {% endif %}
+
+    <div class="pagination-pages">
+      {% if pagination.showFirstLast and pagination.currentPage > 3 %}
+        <a href="{{ pagination.firstUrl }}" class="pagination-number" aria-label="First page">1</a>
+        {% if pagination.currentPage > 4 %}
+          <span class="pagination-ellipsis">...</span>
+        {% endif %}
+      {% endif %}
+
+      {% for page in pagination.pages %}
+        {% if page.ellipsis %}
+          <span class="pagination-ellipsis">{{ page.number }}</span>
+        {% elsif page.current %}
+          <span class="pagination-number pagination-current" aria-current="page" aria-label="Current page, page {{ page.number }}">
+            {{ page.number }}
+          </span>
+        {% else %}
+          <a href="{{ page.url }}" class="pagination-number" aria-label="Go to page {{ page.number }}">
+            {{ page.number }}
+          </a>
+        {% endif %}
+      {% endfor %}
+
+      {% if pagination.showFirstLast and pagination.currentPage < pagination.totalPages - 2 %}
+        {% if pagination.currentPage < pagination.totalPages - 3 %}
+          <span class="pagination-ellipsis">...</span>
+        {% endif %}
+        <a href="{{ pagination.lastUrl }}" class="pagination-number" aria-label="Last page">{{ pagination.totalPages }}</a>
+      {% endif %}
+    </div>
+
+    {% if pagination.showPrevNext and pagination.hasNext %}
+      <a href="{{ pagination.nextUrl }}" 
+         class="pagination-btn pagination-next" 
+         rel="next" 
+         aria-label="Next page">
+        Next
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="9 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    {% endif %}
+
+  </div>
+
+  {% if pagination.totalItems > 0 %}
+    <div class="pagination-info">
+      <p class="text-sm text-gray-600">
+        Showing {{ pagination.startItem }} to {{ pagination.endItem }} 
+        of {{ pagination.totalItems }} results
+      </p>
+    </div>
+  {% endif %}
+</nav>
+
+<style>
+.pagination-nav {
+  @apply mt-8 mb-6;
+}
+
+.pagination-container {
+  @apply flex items-center justify-center space-x-1;
+}
+
+.pagination-btn {
+  @apply inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200;
+}
+
+.pagination-btn:hover {
+  @apply bg-gray-50 text-gray-700;
+}
+
+.pagination-btn.pagination-prev {
+  @apply space-x-1;
+}
+
+.pagination-btn.pagination-next {
+  @apply space-x-1;
+}
+
+.pagination-pages {
+  @apply flex items-center space-x-1 mx-4;
+}
+
+.pagination-number {
+  @apply inline-flex items-center justify-center w-10 h-10 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200;
+}
+
+.pagination-number.pagination-current {
+  @apply bg-blue-600 text-white border-blue-600;
+}
+
+.pagination-number:hover:not(.pagination-current) {
+  @apply bg-gray-50 text-gray-700;
+}
+
+.pagination-ellipsis {
+  @apply inline-flex items-center justify-center w-10 h-10 text-sm font-medium text-gray-400;
+}
+
+.pagination-info {
+  @apply mt-4 text-center;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .pagination-btn,
+  .pagination-number {
+    @apply bg-gray-800 border-gray-600 text-gray-300;
+  }
+  
+  .pagination-btn:hover,
+  .pagination-number:hover:not(.pagination-current) {
+    @apply bg-gray-700 text-white;
+  }
+  
+  .pagination-number.pagination-current {
+    @apply bg-blue-500 border-blue-500;
+  }
+  
+  .pagination-info p {
+    @apply text-gray-400;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .pagination-container {
+    @apply flex-col space-x-0 space-y-4;
+  }
+  
+  .pagination-pages {
+    @apply mx-0;
+  }
+  
+  .pagination-btn {
+    @apply w-full justify-center;
+  }
+}
+</style>
+{% endif %}

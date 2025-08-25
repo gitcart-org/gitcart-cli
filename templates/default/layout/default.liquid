@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="{{ current_language }}"{% if current_language_data.rtl %} dir="rtl"{% endif %}>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    {% if seo %}
+    <!-- Advanced SEO Meta Tags -->
+    {{ seo.meta_html }}
+    {% else %}
+    <!-- Fallback Basic Meta Tags -->
+    <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.name }}</title>
+    <meta name="description" content="{{ page.description | default: site.description }}">
+    <meta property="og:title" content="{{ page.title | default: site.name }}">
+    <meta property="og:description" content="{{ page.description | default: site.description }}">
+    <meta property="og:type" content="{% if page.type == 'product' %}product{% else %}website{% endif %}">
+    <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+    {% if page.image %}
+    <meta property="og:image" content="{{ site.url }}{{ page.image | asset_url }}">
+    {% endif %}
+    
+    <!-- Language Alternates -->
+    {% for lang in site.languages %}
+    <link rel="alternate" hreflang="{{ lang[0] }}" href="{{ site.url }}{{ page.url | url: lang[0] }}">
+    {% endfor %}
+    {% endif %}
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | asset_url }}">
+    {% if current_language_data.rtl %}
+    <link rel="stylesheet" href="{{ '/assets/css/rtl.css' | asset_url }}">
+    {% endif %}
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | asset_url }}">
+    
+    {% if seo.structured_data %}
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {{ seo.structured_data_json }}
+    </script>
+    {% endif %}
+    
+    {% zone 'zone-head' %}
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 {% if current_language_data.rtl %}rtl{% endif %} lang-{{ current_language_data.short | default: current_language }}">
+    <div id="zone-body-start"></div>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow-md dark:shadow-gray-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 gap-4 lg:gap-8">
+                <div class="flex-shrink-0">
+                    <a href="{{ '/' | url: current_language }}" class="text-xl lg:text-2xl font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">{{ site.name }}</a>
+                </div>
+                
+                <!-- Language Switcher -->
+                {% if site.languages.size > 1 %}
+                <div class="flex gap-2">
+                    {% for lang in site.languages %}
+                    <a href="{{ page.url | url: lang[0] }}"
+                       class="px-3 py-1 text-sm font-medium rounded-md transition-all {% if lang[0] == current_language %}bg-blue-600 text-white dark:bg-blue-500{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700{% endif %}">
+                        {{ lang[1].short | upcase }}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <!-- Navigation -->
+                <nav class="hidden md:flex flex-1 justify-center">
+                    <ul class="flex space-x-8">
+                        <li><a href="{{ '/' | url: current_language }}" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{{ 'Home' | t: current_language }}</a></li>
+                        {% for item in site.navigation.header %}
+                        <li>
+                            <a href="{{ item.url | url: current_language }}" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">
+                                {{ item.title | t: current_language }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+                
+                <!-- Cart -->
+                <div class="relative">
+                    <a href="{{ '/cart' | url: current_language }}" class="relative inline-flex items-center p-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-6 h-6">
+                            <path d="M9 2L6 9H18L15 2M3 9H21L19 20H5L3 9Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center" data-cart-count>0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+    </header>
+    
+    <div id="zone-after-header"></div>
+    
+    <!-- Main Content -->
+    <main class="min-h-[60vh] py-8">
+        {{ content }}
+        
+        <div id="zone-after-main"></div>
+    </main>
+    
+    <div id="zone-before-footer"></div>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 dark:bg-gray-950 text-white mt-12">
+        <div id="zone-footer-start"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-white">{{ site.name }}</h3>
+                    <p class="text-gray-300">{{ site.description }}</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-white">{{ 'Quick Links' | t: current_language }}</h4>
+                    <ul class="space-y-2">
+                        {% for item in site.navigation.footer.left %}
+                        <li>
+                            <a href="{{ item.url | url: current_language }}" class="text-gray-300 hover:text-white transition-colors">
+                                {{ item.title | t: current_language }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-white">{{ 'Contact' | t: current_language }}</h4>
+                    <p class="text-gray-300 mb-2">{{ site.contact.email }}</p>
+                    <p class="text-gray-300">{{ site.contact.phone }}</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-white">{{ 'Follow Us' | t: current_language }}</h4>
+                    <div class="flex gap-4">
+                        {% if site.social.facebook %}
+                        <a href="{{ site.social.facebook }}" target="_blank" class="text-gray-300 hover:text-white transition-colors">Facebook</a>
+                        {% endif %}
+                        {% if site.social.instagram %}
+                        <a href="{{ site.social.instagram }}" target="_blank" class="text-gray-300 hover:text-white transition-colors">Instagram</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 dark:border-gray-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400">&copy; {{ site.current_year }} {{ site.name }}. {{ 'All rights reserved' | t: current_language }}.</p>
+            </div>
+        </div>
+        
+        <div id="zone-after-footer"></div>
+    </footer>
+    
+    <!-- Scripts -->
+    <script src="{{ '/assets/js/gitcart.js' | asset_url }}"></script>
+    <script src="{{ '/assets/js/plugin-zones.js' | asset_url }}"></script>
+    <div id="zone-body-end"></div>
+</body>
+</html>

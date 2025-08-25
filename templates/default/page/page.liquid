@@ -1,0 +1,60 @@
+<div class="static-page">
+    <div class="container">
+        <article class="page-content">
+            <h1>{{ page.metadata.title }}</h1>
+            
+            {% if page.metadata.description %}
+            <p class="page-description">{{ page.metadata.description }}</p>
+            {% endif %}
+            
+            {% if page.readingTime %}
+            <div class="reading-time">
+                <span>📖 {{ page.readingTime.text }}</span>
+            </div>
+            {% endif %}
+            
+            <!-- Table of Contents -->
+            {% if page.toc.size > 0 %}
+            <div class="table-of-contents">
+                <h2>{{ 'Table of Contents' | t: current_language }}</h2>
+                <ul class="toc-list">
+                    {% for item in page.toc %}
+                    <li class="toc-level-{{ item.level }}">
+                        <a href="#{{ item.id }}">{{ item.text }}</a>
+                        {% if item.children.size > 0 %}
+                        <ul>
+                            {% for child in item.children %}
+                            <li class="toc-level-{{ child.level }}">
+                                <a href="#{{ child.id }}">{{ child.text }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            <!-- Page Content -->
+            <div class="content">
+                {{ page.html }}
+            </div>
+            
+            <!-- Page Navigation -->
+            <div class="page-navigation">
+                {% if page.prev %}
+                <a href="{{ page.prev.url | url: current_language }}" class="nav-prev">
+                    ← {{ page.prev.title }}
+                </a>
+                {% endif %}
+                
+                {% if page.next %}
+                <a href="{{ page.next.url | url: current_language }}" class="nav-next">
+                    {{ page.next.title }} →
+                </a>
+                {% endif %}
+            </div>
+        </article>
+    </div>
+</div>

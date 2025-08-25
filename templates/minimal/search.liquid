@@ -1,0 +1,339 @@
+---
+layout: default
+---
+
+<div class="search-page">
+  <h1>Vyhledávání</h1>
+  
+  <!-- Search Form -->
+  <form class="search-form" onsubmit="performSearch(event)" style="margin-bottom: 30px;">
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+      <input type="text" 
+             id="search-input" 
+             name="query" 
+             placeholder="Vyhledat produkty..." 
+             value="{{ request.query }}"
+             style="flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
+      <button type="submit" 
+              style="padding: 12px 20px; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        Vyhledat
+      </button>
+    </div>
+    
+    <!-- Filters -->
+    <div class="search-filters" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Kategorie:</label>
+        <select id="category-filter" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+          <option value="">Všechny kategorie</option>
+          <option value="elektronika">Elektronika</option>
+          <option value="obleceni">Oblečení</option>
+          <option value="knihy">Knihy</option>
+        </select>
+      </div>
+      
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Cena od:</label>
+        <input type="number" 
+               id="price-min" 
+               placeholder="0" 
+               min="0"
+               style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+      </div>
+      
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Cena do:</label>
+        <input type="number" 
+               id="price-max" 
+               placeholder="50000" 
+               min="0"
+               style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+      </div>
+      
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Řadit podle:</label>
+        <select id="sort-filter" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+          <option value="relevance">Relevance</option>
+          <option value="price-asc">Cena (nejlevnější)</option>
+          <option value="price-desc">Cena (nejdražší)</option>
+          <option value="name-asc">Název (A-Z)</option>
+          <option value="name-desc">Název (Z-A)</option>
+        </select>
+      </div>
+    </div>
+  </form>
+  
+  <!-- Search Results -->
+  <div id="search-results" class="search-results">
+    <!-- Results will be loaded here -->
+  </div>
+  
+  <!-- Loading Indicator -->
+  <div id="search-loading" class="search-loading" style="display: none; text-align: center; padding: 40px;">
+    <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #0066cc; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+    <p style="margin-top: 15px; color: #666;">Vyhledávám...</p>
+  </div>
+  
+  <!-- No Results -->
+  <div id="no-results" class="no-results" style="display: none; text-align: center; padding: 60px 20px;">
+    <h2>Žádné výsledky</h2>
+    <p>Pro váš dotaz nebyly nalezeny žádné produkty.</p>
+    <p style="color: #666; margin-top: 20px;">Zkuste:</p>
+    <ul style="list-style: none; padding: 0; color: #666;">
+      <li>• Zkontrolovat překlepy</li>
+      <li>• Použít obecnější termíny</li>
+      <li>• Zkusit jiná klíčová slova</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+// Search functionality
+let searchTimeout;
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Auto-search when typing (debounced)
+  document.getElementById('search-input').addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      performSearch();
+    }, 500);
+  });
+  
+  // Filter changes
+  document.getElementById('category-filter').addEventListener('change', performSearch);
+  document.getElementById('price-min').addEventListener('input', debounceSearch);
+  document.getElementById('price-max').addEventListener('input', debounceSearch);
+  document.getElementById('sort-filter').addEventListener('change', performSearch);
+  
+  // Initial search if query in URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const query = urlParams.get('q') || urlParams.get('query');
+  if (query) {
+    document.getElementById('search-input').value = query;
+    performSearch();
+  }
+});
+
+function debounceSearch() {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(performSearch, 1000);
+}
+
+function performSearch(event) {
+  if (event) {
+    event.preventDefault();
+  }
+  
+  const query = document.getElementById('search-input').value.trim();
+  const category = document.getElementById('category-filter').value;
+  const priceMin = parseInt(document.getElementById('price-min').value) || 0;
+  const priceMax = parseInt(document.getElementById('price-max').value) || 999999;
+  const sort = document.getElementById('sort-filter').value;
+  
+  // Update URL
+  const url = new URL(window.location);
+  if (query) {
+    url.searchParams.set('q', query);
+  } else {
+    url.searchParams.delete('q');
+  }
+  window.history.replaceState({}, '', url);
+  
+  // Show loading
+  showLoading(true);
+  
+  // Simulate search (in real implementation, this would use GitCart.search API)
+  setTimeout(() => {
+    const results = simulateSearch(query, { category, priceMin, priceMax, sort });
+    displayResults(results, query);
+    showLoading(false);
+  }, 500);
+}
+
+function simulateSearch(query, filters) {
+  // This is a mock implementation
+  // In real GitCart, this would use: GitCart.search.query(query, filters)
+  
+  const mockProducts = [
+    {
+      sku: 'IPHONE15-128',
+      title: 'iPhone 15 128GB',
+      price: 25999,
+      category: 'elektronika',
+      image: '/assets/images/iphone-15.jpg',
+      url: '/elektronika/iphone-15/',
+      inStock: true
+    },
+    {
+      sku: 'SAMSUNG-S24',
+      title: 'Samsung Galaxy S24',
+      price: 22999,
+      category: 'elektronika', 
+      image: '/assets/images/samsung-s24.jpg',
+      url: '/elektronika/samsung-galaxy-s24/',
+      inStock: true
+    },
+    {
+      sku: 'MACBOOK-AIR',
+      title: 'MacBook Air M2',
+      price: 32999,
+      category: 'elektronika',
+      image: '/assets/images/macbook-air.jpg',
+      url: '/elektronika/macbook-air/',
+      inStock: false
+    }
+  ];
+  
+  let results = mockProducts;
+  
+  // Filter by query
+  if (query) {
+    const queryLower = query.toLowerCase();
+    results = results.filter(product => 
+      product.title.toLowerCase().includes(queryLower) ||
+      product.category.toLowerCase().includes(queryLower)
+    );
+  }
+  
+  // Filter by category
+  if (filters.category) {
+    results = results.filter(product => product.category === filters.category);
+  }
+  
+  // Filter by price
+  results = results.filter(product => 
+    product.price >= filters.priceMin && product.price <= filters.priceMax
+  );
+  
+  // Sort results
+  switch (filters.sort) {
+    case 'price-asc':
+      results.sort((a, b) => a.price - b.price);
+      break;
+    case 'price-desc':
+      results.sort((a, b) => b.price - a.price);
+      break;
+    case 'name-asc':
+      results.sort((a, b) => a.title.localeCompare(b.title));
+      break;
+    case 'name-desc':
+      results.sort((a, b) => b.title.localeCompare(a.title));
+      break;
+    default:
+      // relevance - keep original order
+      break;
+  }
+  
+  return results;
+}
+
+function displayResults(results, query) {
+  const resultsContainer = document.getElementById('search-results');
+  const noResultsDiv = document.getElementById('no-results');
+  
+  if (results.length === 0) {
+    resultsContainer.innerHTML = '';
+    noResultsDiv.style.display = 'block';
+    return;
+  }
+  
+  noResultsDiv.style.display = 'none';
+  
+  // Results header
+  let html = `
+    <div style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+      <p style="color: #666; margin: 0;">
+        Nalezeno <strong>${results.length}</strong> produktů
+        ${query ? ` pro "<strong>${query}</strong>"` : ''}
+      </p>
+    </div>
+  `;
+  
+  // Results grid
+  html += '<div class="products-grid">';
+  
+  results.forEach(product => {
+    html += `
+      <article class="product-card">
+        <div style="margin-bottom: 10px; position: relative;">
+          ${product.image ? 
+            `<a href="${product.url}"><img src="${product.image}" alt="${product.title}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 4px;"></a>` :
+            `<div style="width: 100%; height: 200px; background: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #999;">Bez obrázku</div>`
+          }
+          
+          ${!product.inStock ? 
+            '<span style="position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; padding: 3px 8px; font-size: 11px; border-radius: 3px;">VYPRODÁNO</span>' : 
+            ''
+          }
+        </div>
+        
+        <h3 style="margin-bottom: 8px; font-size: 1rem;">
+          <a href="${product.url}" style="color: inherit; text-decoration: none;">${product.title}</a>
+        </h3>
+        
+        <div style="margin-bottom: 10px; font-weight: bold; color: #0066cc; font-size: 1.1rem;">
+          ${formatPrice(product.price)}
+        </div>
+        
+        <div style="display: flex; gap: 5px;">
+          ${product.inStock ? 
+            `<button onclick="quickAddToCart('${product.sku}', '${product.title}', ${product.price})" style="flex: 1; padding: 8px; font-size: 12px; background: #0066cc; color: white; border: none; border-radius: 3px; cursor: pointer;">Do košíku</button>` :
+            `<button disabled style="flex: 1; padding: 8px; font-size: 12px; background: #ccc; color: white; border: none; border-radius: 3px; cursor: not-allowed;">Vyprodáno</button>`
+          }
+          
+          <a href="${product.url}" style="padding: 8px 12px; font-size: 12px; background: transparent; color: #0066cc; border: 1px solid #0066cc; border-radius: 3px; text-decoration: none;">Detail</a>
+        </div>
+      </article>
+    `;
+  });
+  
+  html += '</div>';
+  resultsContainer.innerHTML = html;
+}
+
+function showLoading(show) {
+  document.getElementById('search-loading').style.display = show ? 'block' : 'none';
+  document.getElementById('search-results').style.display = show ? 'none' : 'block';
+  document.getElementById('no-results').style.display = 'none';
+}
+
+function formatPrice(amount) {
+  return new Intl.NumberFormat('cs-CZ', {
+    style: 'decimal',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(amount) + ' Kč';
+}
+
+function quickAddToCart(sku, title, price) {
+  if (typeof GitCart === 'undefined') {
+    alert('GitCart není načteno');
+    return;
+  }
+  
+  try {
+    GitCart.cart.add(sku, 1, {
+      title: title,
+      price: price
+    });
+    
+    alert('Produkt "' + title + '" byl přidán do košíku!');
+  } catch (error) {
+    alert('Chyba při přidávání do košíku: ' + error.message);
+  }
+}
+</script>
+
+<!-- Animations -->
+<style>
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+</style>

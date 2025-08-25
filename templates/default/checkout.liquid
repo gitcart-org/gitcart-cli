@@ -1,0 +1,187 @@
+<div class="checkout-page">
+    <div class="container">
+        <h1>{{ 'Checkout' | t: current_language }}</h1>
+        
+        <div class="checkout-content">
+            <div class="checkout-form">
+                <form id="checkout-form">
+                    <!-- Customer Information -->
+                    <div class="checkout-section">
+                        <h2>{{ 'Customer Information' | t: current_language }}</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="firstName">{{ 'First Name' | t: current_language }} *</label>
+                                <input type="text" id="firstName" name="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">{{ 'Last Name' | t: current_language }} *</label>
+                                <input type="text" id="lastName" name="lastName" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="email">{{ 'Email' | t: current_language }} *</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">{{ 'Phone' | t: current_language }}</label>
+                                <input type="tel" id="phone" name="phone">
+                            </div>
+                            <div class="form-group">
+                                <label for="company">{{ 'Company' | t: current_language }}</label>
+                                <input type="text" id="company" name="company">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Shipping Address -->
+                    <div class="checkout-section">
+                        <h2>{{ 'Shipping Address' | t: current_language }}</h2>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label for="street">{{ 'Street Address' | t: current_language }} *</label>
+                                <input type="text" id="street" name="street" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="city">{{ 'City' | t: current_language }} *</label>
+                                <input type="text" id="city" name="city" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="zip">{{ 'Postal Code' | t: current_language }} *</label>
+                                <input type="text" id="zip" name="zip" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="country">{{ 'Country' | t: current_language }} *</label>
+                                <select id="country" name="country" required>
+                                    <option value="">{{ 'Select country' | t: current_language }}</option>
+                                    <option value="CZ">{{ 'Czech Republic' | t: current_language }}</option>
+                                    <option value="SK">{{ 'Slovakia' | t: current_language }}</option>
+                                    <option value="DE">{{ 'Germany' | t: current_language }}</option>
+                                    <option value="AT">{{ 'Austria' | t: current_language }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="note">{{ 'Order Notes' | t: current_language }}</label>
+                            <textarea id="note" name="note" rows="3" placeholder="{{ 'Any special instructions for delivery' | t: current_language }}"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Shipping Method -->
+                    <div class="checkout-section">
+                        <h2>{{ 'Shipping Method' | t: current_language }}</h2>
+                        <div class="shipping-methods" id="shipping-methods">
+                            <div class="shipping-option">
+                                <input type="radio" id="shipping-standard" name="shipping" value="standard" checked>
+                                <label for="shipping-standard">
+                                    <span class="method-name">{{ 'Standard Delivery' | t: current_language }}</span>
+                                    <span class="method-time">3-5 {{ 'business days' | t: current_language }}</span>
+                                    <span class="method-price">{{ 149 | money: language.currency }}</span>
+                                </label>
+                            </div>
+                            <div class="shipping-option">
+                                <input type="radio" id="shipping-express" name="shipping" value="express">
+                                <label for="shipping-express">
+                                    <span class="method-name">{{ 'Express Delivery' | t: current_language }}</span>
+                                    <span class="method-time">1-2 {{ 'business days' | t: current_language }}</span>
+                                    <span class="method-price">{{ 299 | money: language.currency }}</span>
+                                </label>
+                            </div>
+                            <div class="shipping-option">
+                                <input type="radio" id="shipping-pickup" name="shipping" value="pickup">
+                                <label for="shipping-pickup">
+                                    <span class="method-name">{{ 'Store Pickup' | t: current_language }}</span>
+                                    <span class="method-time">{{ 'Available next business day' | t: current_language }}</span>
+                                    <span class="method-price">{{ 'Free' | t: current_language }}</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div id="zone-shipping-methods"></div>
+                    </div>
+                    
+                    <!-- Payment Method -->
+                    <div class="checkout-section">
+                        <h2>{{ 'Payment Method' | t: current_language }}</h2>
+                        <div class="payment-methods" id="payment-methods">
+                            <div class="payment-option">
+                                <input type="radio" id="payment-card" name="payment" value="card" checked>
+                                <label for="payment-card">
+                                    <span class="method-name">{{ 'Credit/Debit Card' | t: current_language }}</span>
+                                    <span class="method-icons">💳</span>
+                                </label>
+                            </div>
+                            <div class="payment-option">
+                                <input type="radio" id="payment-bank" name="payment" value="bank_transfer">
+                                <label for="payment-bank">
+                                    <span class="method-name">{{ 'Bank Transfer' | t: current_language }}</span>
+                                    <span class="method-info">{{ 'Pay via bank transfer' | t: current_language }}</span>
+                                </label>
+                            </div>
+                            <div class="payment-option">
+                                <input type="radio" id="payment-cash" name="payment" value="cash_on_delivery">
+                                <label for="payment-cash">
+                                    <span class="method-name">{{ 'Cash on Delivery' | t: current_language }}</span>
+                                    <span class="method-fee">+{{ 29 | money: language.currency }}</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div id="zone-payment-methods"></div>
+                    </div>
+                    
+                    <!-- Terms -->
+                    <div class="checkout-section">
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="terms" name="terms" required>
+                                {{ 'I agree to the' | t: current_language }}
+                                <a href="{{ 'obchodni-podminky' | page_url: current_language }}" target="_blank">
+                                    {{ 'Terms and Conditions' | t: current_language }}
+                                </a>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="newsletter" name="newsletter">
+                                {{ 'Subscribe to newsletter for updates and offers' | t: current_language }}
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h2>{{ 'Order Summary' | t: current_language }}</h2>
+                
+                <div class="summary-items" id="checkout-items">
+                    <!-- Items will be loaded by JavaScript -->
+                </div>
+                
+                <div class="summary-totals">
+                    <div class="total-row">
+                        <span>{{ 'Subtotal' | t: current_language }}:</span>
+                        <span class="checkout-subtotal">0 {{ language.currency }}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>{{ 'Shipping' | t: current_language }}:</span>
+                        <span class="checkout-shipping">{{ 149 | money: language.currency }}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>{{ 'Tax' | t: current_language }}:</span>
+                        <span class="checkout-tax">0 {{ language.currency }}</span>
+                    </div>
+                    <div class="total-row final">
+                        <span>{{ 'Total' | t: current_language }}:</span>
+                        <span class="checkout-total">0 {{ language.currency }}</span>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary btn-large btn-block" id="place-order" disabled>
+                    {{ 'Place Order' | t: current_language }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

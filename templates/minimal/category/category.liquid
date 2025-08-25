@@ -1,0 +1,199 @@
+---
+layout: default
+---
+
+<div class="category-page">
+  <div id="zone-category-start"></div>
+  <!-- Category Header -->
+  <header class="category-header" style="margin-bottom: 40px;">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" style="margin-bottom: 15px; font-size: 14px; color: #666;">
+      <a href="/">Domů</a>
+      {% if category.parent %}
+        / <a href="{{ category.parent.url }}">{{ category.parent.title }}</a>
+      {% endif %}
+      / <span>{{ category.title }}</span>
+    </nav>
+    
+    <h1>{{ category.title }}</h1>
+    
+    {% if category.description %}
+      <p style="font-size: 1.1rem; color: #666; margin-top: 10px;">{{ category.description }}</p>
+    {% endif %}
+  </header>
+
+  <div id="zone-after-category-header"></div>
+
+  <!-- Category Content -->
+  {% if category.content %}
+    <div class="category-content" style="margin-bottom: 40px;">
+      {{ category.content }}
+    </div>
+  {% endif %}
+
+
+  <!-- Subcategories -->
+  {% if category.children.size > 0 %}
+    <section class="subcategories" style="margin-bottom: 40px;">
+      <h2>Kategorie</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+        {% for subcategory in category.children %}
+          <a href="{{ subcategory.url }}" 
+             style="display: block; padding: 15px; border: 1px solid #eee; border-radius: 4px; text-decoration: none; color: inherit; transition: all 0.2s;">
+            <h3 style="margin-bottom: 5px; font-size: 1rem;">{{ subcategory.title }}</h3>
+            {% if subcategory.product_count %}
+              <p style="font-size: 14px; color: #666; margin: 0;">{{ subcategory.product_count }} produktů</p>
+            {% endif %}
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  <div id="zone-before-products"></div>
+
+  <!-- Products -->
+  {% if category.products.size > 0 %}
+    <section class="products">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Produkty</h2>
+        <div style="font-size: 14px; color: #666;">
+          {{ category.products.size }} produktů
+        </div>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="products-grid">
+        {% for product in category.products %}
+          <article class="product-card">
+            <!-- Product Image -->
+            <div style="position: relative; margin-bottom: 10px;">
+              {% if product.images.size > 0 %}
+                <a href="{{ product.url }}">
+                  <img src="{{ product.images[0] | asset_url }}" 
+                       alt="{{ product.images[0].alt | default: product.title }}"
+                       style="width: 100%; height: 200px; object-fit: cover; border-radius: 4px;">
+                </a>
+              {% else %}
+                <div style="width: 100%; height: 200px; background: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #999;">
+                  Bez obrázku
+                </div>
+              {% endif %}
+              
+              <!-- Product Badges -->
+              {% if product.featured %}
+                <span style="position: absolute; top: 10px; left: 10px; background: #e74c3c; color: white; padding: 3px 8px; font-size: 11px; border-radius: 3px;">
+                  DOPORUČENO
+                </span>
+              {% endif %}
+              
+              {% if product.sale_price and product.sale_price < product.price %}
+                <span style="position: absolute; top: 10px; right: 10px; background: #27ae60; color: white; padding: 3px 8px; font-size: 11px; border-radius: 3px;">
+                  SLEVA
+                </span>
+              {% endif %}
+            </div>
+
+            <!-- Product Info -->
+            <div class="product-info">
+              <h3 style="margin-bottom: 8px; font-size: 1rem;">
+                <a href="{{ product.url }}" style="color: inherit; text-decoration: none;">
+                  {{ product.title }}
+                </a>
+              </h3>
+              
+              {% if product.sku %}
+                <p style="font-size: 12px; color: #999; margin-bottom: 8px;">{{ product.sku }}</p>
+              {% endif %}
+
+              <!-- Price -->
+              <div class="product-price" style="margin-bottom: 10px;">
+                {% if product.sale_price and product.sale_price < product.price %}
+                  <span style="font-weight: bold; color: #e74c3c; font-size: 1.1rem;">
+                    {{ product.sale_price }} {{ product.currency }}
+                  </span>
+                  <br>
+                  <span style="text-decoration: line-through; color: #999; font-size: 0.9rem;">
+                    {{ product.price }} {{ product.currency }}
+                  </span>
+                {% else %}
+                  <span style="font-weight: bold; color: #0066cc; font-size: 1.1rem;">
+                    {{ product.price }} {{ product.currency }}
+                  </span>
+                {% endif %}
+              </div>
+
+              <!-- Stock Status -->
+              {% if product.stock > 0 %}
+                <p style="font-size: 12px; color: #27ae60; margin-bottom: 10px;">
+                  ✓ Skladem ({{ product.stock }} ks)
+                </p>
+              {% else %}
+                <p style="font-size: 12px; color: #e74c3c; margin-bottom: 10px;">
+                  Vyprodáno
+                </p>
+              {% endif %}
+
+              <!-- Actions -->
+              <div style="display: flex; gap: 5px;">
+                {% if product.stock > 0 %}
+                  <button onclick="quickAddToCart('{{ product.sku }}', '{{ product.title }}', {{ product.sale_price | default: product.price }})" 
+                          style="flex: 1; padding: 8px; font-size: 12px; background: #0066cc; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                    Do košíku
+                  </button>
+                {% else %}
+                  <button disabled 
+                          style="flex: 1; padding: 8px; font-size: 12px; background: #ccc; color: white; border: none; border-radius: 3px; cursor: not-allowed;">
+                    Vyprodáno
+                  </button>
+                {% endif %}
+                
+                <a href="{{ product.url }}" 
+                   style="padding: 8px 12px; font-size: 12px; background: transparent; color: #0066cc; border: 1px solid #0066cc; border-radius: 3px; text-decoration: none; text-align: center;">
+                  Detail
+                </a>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  {% else %}
+    <div style="text-align: center; padding: 60px 20px; color: #666;">
+      <h2>Žádné produkty</h2>
+      <p>V této kategorii momentálně nejsou žádné produkty.</p>
+    </div>
+  {% endif %}
+
+  <div id="zone-after-products"></div>
+  <div id="zone-category-end"></div>
+</div>
+
+<script>
+function quickAddToCart(sku, title, price) {
+  if (typeof GitCart === 'undefined') {
+    alert('GitCart není načteno');
+    return;
+  }
+  
+  try {
+    GitCart.cart.add(sku, 1, {
+      title: title,
+      price: price
+    });
+    
+    alert('Produkt "' + title + '" byl přidán do košíku!');
+  } catch (error) {
+    alert('Chyba při přidávání do košíku: ' + error.message);
+  }
+}
+</script>
+
+<!-- Mobile Styles -->
+<style>
+@media (max-width: 768px) {
+  .subcategories > div {
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>

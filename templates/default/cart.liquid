@@ -1,0 +1,71 @@
+<div class="cart-page">
+    <div class="container">
+        <h1>{{ 'Shopping Cart' | t: current_language }}</h1>
+        
+        <div class="cart-content" id="cart-container">
+            <!-- Cart items will be loaded here by JavaScript -->
+            <div class="empty-cart">
+                <p>{{ 'Your cart is empty' | t: current_language }}</p>
+                <a href="{{ '/' | url: current_language }}" class="btn btn-primary">
+                    {{ 'Continue Shopping' | t: current_language }}
+                </a>
+            </div>
+        </div>
+        
+        <div class="cart-actions" id="cart-actions" style="display: none;">
+            <div class="cart-summary">
+                <div id="zone-cart-summary"></div>
+                <div class="summary-row">
+                    <span>{{ 'Subtotal' | t: current_language }}:</span>
+                    <span class="cart-subtotal">0 {{ language.currency }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>{{ 'Shipping' | t: current_language }}:</span>
+                    <span class="cart-shipping">{{ 'Calculated at checkout' | t: current_language }}</span>
+                </div>
+                <div class="summary-row total">
+                    <span>{{ 'Total' | t: current_language }}:</span>
+                    <span class="cart-total">0 {{ language.currency }}</span>
+                </div>
+            </div>
+            
+            <div class="checkout-actions">
+                <div id="zone-cart-before-checkout"></div>
+                <button class="btn btn-primary btn-large" id="checkout-btn">
+                    {{ 'Proceed to Checkout' | t: current_language }}
+                </button>
+                <a href="{{ '/' | url: current_language }}" class="btn btn-secondary">
+                    {{ 'Continue Shopping' | t: current_language }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cart Item Template -->
+<script type="text/template" id="cart-item-template">
+    <div class="cart-item" data-sku="{sku}">
+        <div class="item-image">
+            <img src="{image}" alt="{title}">
+        </div>
+        <div class="item-details">
+            <h3>{title}</h3>
+            <p class="item-sku">SKU: {sku}</p>
+            {variant}
+        </div>
+        <div class="item-quantity">
+            <button class="qty-btn minus">-</button>
+            <input type="number" value="{quantity}" min="1" class="quantity-input">
+            <button class="qty-btn plus">+</button>
+        </div>
+        <div class="item-price">
+            <span class="price">{price}</span>
+        </div>
+        <div class="item-total">
+            <span class="total">{total}</span>
+        </div>
+        <div class="item-actions">
+            <button class="btn-remove" title="{{ 'Remove item' | t: current_language }}">×</button>
+        </div>
+    </div>
+</script>

@@ -1,0 +1,46 @@
+{
+  "name": "gitcart-cli",
+  "version": "0.1.0",
+  "description": "GitCart CLI - Universal static e-shop generator (standalone distribution)",
+  "homepage": "https://github.com/gitcart-org/gitcart-cli#readme",
+  "bugs": {
+    "url": "https://github.com/gitcart-org/gitcart-cli/issues",
+    "email": "support@gitcart.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gitcart-org/gitcart-cli.git"
+  },
+  "keywords": [
+    "e-commerce",
+    "static-site-generator",
+    "markdown",
+    "e-shop",
+    "ssg",
+    "jamstack",
+    "multilingual",
+    "seo",
+    "plugins",
+    "liquid",
+    "tailwind",
+    "responsive",
+    "shopping-cart",
+    "cms",
+    "github-pages"
+  ],
+  "author": "GitCart Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "bin": {
+    "gitcart": "./gitcart"
+  },
+  "files": [
+    "gitcart*",
+    "docs/**/*",
+    "templates/**/*",
+    "README.md",
+    "LICENSE"
+  ]
+}
