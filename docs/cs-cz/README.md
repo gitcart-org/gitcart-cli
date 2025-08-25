@@ -48,19 +48,26 @@ GitCart je moderní, lightweight generátor statických e-commerce webů, který
 
 ### Instalace
 
+#### Doporučeno: Globální instalace
 ```bash
-# Globální instalace CLI
 npm install -g gitcart-cli
+```
 
-# Nebo lokální instalace
+#### Alternativně: Lokální instalace s npx
+```bash
 npm install gitcart-cli
+# Pak použití s npx:
+npx gitcart init muj-eshop
 ```
 
 ### Vytvoření nového projektu
 
 ```bash
-# Interaktivní vytvoření projektu
-gitcart init my-eshop
+# S globální instalací
+gitcart init muj-eshop
+
+# S lokální instalací
+npx gitcart init muj-eshop
 
 # S předvoleným template
 gitcart init my-eshop --template default

@@ -7,15 +7,17 @@ Complete reference guide for all GitCart CLI commands.
 ### Installation
 
 ```bash
-# Global installation
+# Global installation (recommended)
 npm install -g gitcart-cli
 
 # Local installation for project
 npm install gitcart-cli
 
 # Verify installation
-gitcart --version
-gitcart --help
+gitcart --version          # with global installation only
+npx gitcart --version      # with local installation
+gitcart --help             # with global installation only
+npx gitcart --help         # with local installation
 ```
 
 ### Global Parameters

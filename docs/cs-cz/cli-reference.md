@@ -7,15 +7,17 @@ Kompletní referenční příručka pro všechny CLI příkazy GitCart.
 ### Instalace
 
 ```bash
-# Globální instalace
+# Globální instalace (doporučeno)
 npm install -g gitcart-cli
 
 # Lokální instalace pro projekt
 npm install gitcart-cli
 
 # Ověření instalace
-gitcart --version
-gitcart --help
+gitcart --version          # pouze s globální instalací
+npx gitcart --version      # s lokální instalací
+gitcart --help             # pouze s globální instalací
+npx gitcart --help         # s lokální instalací
 ```
 
 ### Globální parametry

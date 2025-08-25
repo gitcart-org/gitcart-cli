@@ -1,41 +1,50 @@
 # GitCart CLI - Standalone Distribution
 
-## Quick Install
+## Installation Options
 
-### Global Installation (Recommended)
+### Option 1: Global Installation (Recommended)
 ```bash
 npm install -g gitcart-cli
 ```
 
-### Direct Binary Usage
-Download the appropriate binary for your platform:
-- **Linux**: `gitcart`
-- **Windows**: `gitcart.exe`  
+### Option 2: Local Installation with npx
+```bash
+npm install gitcart-cli
+# Then use with npx:
+npx gitcart init my-shop
+```
+
+### Option 3: Direct Binary Usage
+Download the appropriate binary for your platform from GitHub releases:
+- **Linux**: `gitcart-linux`
+- **Windows**: `gitcart-win.exe`  
 - **macOS**: `gitcart-macos`
 
 Make it executable and add to PATH:
 ```bash
 # Linux/macOS
-chmod +x gitcart
-sudo mv gitcart /usr/local/bin/
+chmod +x gitcart-*
+sudo mv gitcart-* /usr/local/bin/gitcart
 
-# Windows - Add gitcart.exe to your PATH
+# Windows - Add gitcart-win.exe to your PATH as gitcart.exe
 ```
 
 ## Usage
 
+### With Global Installation
 ```bash
-# Create new e-shop
 gitcart init my-shop
-
-# Build static site
 gitcart build
-
-# Start development server
 gitcart dev
-
-# See all commands
 gitcart --help
+```
+
+### With Local Installation (npx)
+```bash
+npx gitcart init my-shop
+npx gitcart build  
+npx gitcart dev
+npx gitcart --help
 ```
 
 ## Documentation

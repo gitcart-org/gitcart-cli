@@ -48,19 +48,26 @@ GitCart is a modern, lightweight static e-commerce website generator that create
 
 ### Installation
 
+#### Recommended: Global Installation
 ```bash
-# Global CLI installation
 npm install -g gitcart-cli
+```
 
-# Or local installation
+#### Alternative: Local Installation with npx
+```bash
 npm install gitcart-cli
+# Then use with npx:
+npx gitcart init my-eshop
 ```
 
 ### Creating a New Project
 
 ```bash
-# Interactive project creation
+# With global installation
 gitcart init my-eshop
+
+# With local installation
+npx gitcart init my-eshop
 
 # With default template
 gitcart init my-eshop --template default
