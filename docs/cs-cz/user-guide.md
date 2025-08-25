@@ -110,7 +110,7 @@ Interaktivní průvodce se zeptá na:
 #### Ruční vytvoření
 
 1. Vytvořte složku: `cs-cz/categories/elektronika/`
-2. Vytvořte soubor `.category.md`:
+2. Vytvořte soubor `elektronika.md` (stejný název jako složka):
 
 ```markdown
 ---

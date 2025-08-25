@@ -155,7 +155,7 @@ my-eshop/
 ├── en-us/                   # Language content
 │   ├── categories/          # Product categories
 │   │   └── electronics/
-│   │       ├── .category.md # Category metadata
+│   │       ├── electronics.md # Category metadata
 │   │       ├── .products/   # Products in category
 │   │       └── .images/     # Category images
 │   ├── pages/              # Static pages

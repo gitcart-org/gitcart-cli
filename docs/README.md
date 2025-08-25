@@ -120,7 +120,7 @@ my-eshop/
 ├── cs-cz/                   # Language content (Czech)
 │   ├── categories/          # Product categories
 │   │   └── elektronika/
-│   │       ├── .category.md # Category metadata
+│   │       ├── elektronika.md # Category metadata
 │   │       ├── .products/   # Products in category
 │   │       └── .images/     # Category images
 │   ├── pages/              # Static pages

@@ -600,7 +600,7 @@ describe('Structured Data', () => {
 ### Category SEO
 
 ```markdown
-<!-- cs-cz/categories/elektronika/.category.md -->
+<!-- cs-cz/categories/elektronika/elektronika.md -->
 ---
 title: Elektronika
 seo_title: "Elektronika - mobily, počítače, audio | Můj E-shop"

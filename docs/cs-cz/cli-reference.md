@@ -301,7 +301,7 @@ gitcart category add
 ? Create sample product: Yes
 ? Banner image name: elektronika-banner.jpg
 
-✅ Category created: cs-cz/categories/elektronika/.category.md
+✅ Category created: cs-cz/categories/elektronika/elektronika.md
 📁 Created directory structure
 📄 Generated sample product: samsung-galaxy.md
 ```
@@ -670,7 +670,7 @@ gitcart validate [options]
      Missing required field: price
    - cs-cz/pages/kontakt.md:3
      Invalid email format in frontmatter
-   - en-us/categories/electronics/.category.md:1
+   - en-us/categories/electronics/electronics.md:1
      Invalid YAML syntax
    
    Warnings:

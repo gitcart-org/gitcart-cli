@@ -110,7 +110,7 @@ The interactive wizard will ask for:
 #### Manual Creation
 
 1. Create folder: `en-us/categories/electronics/`
-2. Create file `.category.md`:
+2. Create file `electronics.md`:
 
 ```markdown
 ---

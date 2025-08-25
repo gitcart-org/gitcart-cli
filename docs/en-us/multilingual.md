@@ -155,7 +155,7 @@ project/
 ├── cs-cz/                      # Czech content
 │   ├── categories/
 │   │   └── electronics/
-│   │       ├── .category.md
+│   │       ├── electronics.md
 │   │       ├── .products/
 │   │       │   ├── iphone-15.md
 │   │       │   └── samsung-galaxy.md
@@ -171,7 +171,7 @@ project/
 ├── en-us/                      # English content
 │   ├── categories/
 │   │   └── electronics/
-│   │       ├── .category.md
+│   │       ├── electronics.md
 │   │       ├── .products/
 │   │       │   ├── iphone-15.md
 │   │       │   └── samsung-galaxy.md
@@ -187,7 +187,7 @@ project/
 └── de-de/                      # German content
     ├── categories/
     │   └── elektronik/
-    │       ├── .category.md
+    │       ├── elektronik.md
     │       ├── .products/
     │       └── .images/
     └── pages/
@@ -297,7 +297,7 @@ The iPhone 15 represents a major leap forward in smartphone technology. With the
 
 ### Categories in Different Languages
 
-#### Czech Category (cs-cz/categories/electronics/.category.md)
+#### Czech Category (cs-cz/categories/electronics/electronics.md)
 
 ```markdown
 ---
@@ -322,7 +322,7 @@ Discover the latest electronic devices at the best prices. From smartphones to l
 - **Smart devices** - Smartwatches, fitness trackers
 ```
 
-#### English Category (en-us/categories/electronics/.category.md)
+#### English Category (en-us/categories/electronics/electronics.md)
 
 ```markdown
 ---
@@ -667,7 +667,7 @@ gitcart multilingual scaffold --missing
 ✅ Created translation templates:
   en-us/categories/electronics/.products/samsung-galaxy.md
   en-us/pages/shipping-payment.md
-  de-de/categories/electronics/.category.md
+  de-de/categories/electronics/electronics.md
 ```
 
 ### Bulk Operations

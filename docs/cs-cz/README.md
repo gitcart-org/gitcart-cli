@@ -155,7 +155,7 @@ my-eshop/
 ├── cs-cz/                   # Jazykové obsahy
 │   ├── categories/          # Kategorie produktů
 │   │   └── elektronika/
-│   │       ├── .category.md # Metadata kategorie
+│   │       ├── elektronika.md # Metadata kategorie
 │   │       ├── .products/   # Produkty v kategorii
 │   │       └── .images/     # Obrázky kategorie
 │   ├── pages/              # Statické stránky
